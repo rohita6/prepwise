@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Egg Fried Rice",
+    "ingredients": ["egg", "rice", "soy sauce", "onion"]
+  },
+  {
+    "name": "Veggie Omelette",
+    "ingredients": ["egg", "onion", "cheese", "capsicum"]
+  },
+  {
+    "name": "Tomato Pasta",
+    "ingredients": ["pasta", "tomato", "cheese", "garlic"]
+  },
+  {
+    "name": "Onion Rice Bowl",
+    "ingredients": ["rice", "onion", "garlic"]
+  },
+  {
+    "name": "Cheesy Scramble",
+    "ingredients": ["egg", "cheese", "butter"]
+  }
+]
