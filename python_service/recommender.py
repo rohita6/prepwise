@@ -1,9 +1,18 @@
 import json
+import sys
+import os
 
-# Temporary test input
-user_ingredients = {"egg", "rice", "onion"}
+if len(sys.argv) < 2:
+    print(json.dumps({"error": "No ingredients provided"}))
+    sys.exit(1)
 
-with open("recipes.json", "r") as file:
+# Read ingredients from Node
+user_ingredients = set(json.loads(sys.argv[1]))
+
+file_path = os.path.join(os.path.dirname(__file__), "recipes.json")
+
+# Load recipes
+with open(file_path, "r") as file:
     recipes = json.load(file)
 
 results = []

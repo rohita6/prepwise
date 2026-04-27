@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const { spawn } = require("child_process");
 
 const app = express();
 const PORT = 5001;
@@ -24,31 +26,54 @@ app.post("/recommend-recipes", (req, res) => {
     });
   }
 
-  //replace with a call to recommender.py
-  const recipes = [
-    {
-      name: "Egg Fried Rice",
-      matchScore: 92,
-      missingIngredients: ["soy sauce"],
-    },
-    {
-      name: "Veggie Omelette",
-      matchScore: 78,
-      missingIngredients: ["cheese"],
-    },
-    {
-      name: "Onion Rice Bowl",
-      matchScore: 65,
-      missingIngredients: ["garlic"],
-    },
-  ];
+  const scriptPath = path.join(
+    __dirname,
+    "..",
+    "python_service",
+    "recommender.py"
+  );
 
-  res.json({
-    message: "Recipe recommendations generated successfully.",
-    inputIngredients: ingredients,
-    recipes: recipes,
+  const pythonProcess = spawn("python3", [
+    scriptPath,
+    JSON.stringify(ingredients),
+  ]);
+  let pythonOutput = "";
+  let pythonError = "";
+
+  // collect stdout
+  pythonProcess.stdout.on("data", (data) => {
+    pythonOutput += data.toString();
   });
-});
+
+  // collect stderr
+  pythonProcess.stderr.on("data", (data) => {
+    pythonError += data.toString();
+  });
+
+  // when python finishes
+  pythonProcess.on("close", (code) => {
+    if (code !== 0) {
+      return res.status(500).json({
+        error: "Python process failed",
+        details: pythonError,
+      });
+    }
+
+    try {
+      const result = JSON.parse(pythonOutput);
+
+      return res.json({
+        message: "Recipe recommendations generated successfully",
+        recipes: result,
+      });
+    } catch (err) {
+        return res.status(500).json({
+          error: "Failed to parse Python output",
+          rawOutput: pythonOutput,
+        });
+      }
+    });
+  });
 
 // Start server
 app.listen(PORT, () => {
