@@ -26,6 +26,12 @@ app.post("/recommend-recipes", (req, res) => {
     });
   }
 
+  if (ingredients.length === 0) {
+    return res.status(400).json({
+      error: "Ingredients list cannot be empty",
+    });
+  }
+
   const scriptPath = path.join(
     __dirname,
     "..",
