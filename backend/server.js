@@ -33,10 +33,22 @@ app.post("/recommend-recipes", (req, res) => {
     "recommender.py"
   );
 
+  let responded = false;
   const pythonProcess = spawn("python3", [
     scriptPath,
     JSON.stringify(ingredients),
   ]);
+  const timeout = setTimeout(() => {
+    pythonProcess.kill("SIGKILL");
+
+    if (responded) return;
+    responded = true;
+
+    res.status(500).json({
+      error: "Python process timed out",
+    });
+  }, 5000);
+
   let pythonOutput = "";
   let pythonError = "";
 
@@ -52,6 +64,11 @@ app.post("/recommend-recipes", (req, res) => {
 
   // when python finishes
   pythonProcess.on("close", (code) => {
+    clearTimeout(timeout);
+
+    if (responded) return;
+    responded = true;
+
     if (code !== 0) {
       return res.status(500).json({
         error: "Python process failed",
