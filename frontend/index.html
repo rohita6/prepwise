@@ -30,6 +30,15 @@
       border-color: #006400;
       color: white;
     }
+
+    .green-tag {
+      background-color: rgba(34, 139, 34, 0.18); /* translucent green */
+      color: #1f7a1f; /* deep green text */
+      border: 1px solid rgba(34, 139, 34, 0.35);
+      backdrop-filter: blur(6px); /* gives that soft glass look */
+      /* border-radius: 999px; */
+      font-weight: 500;
+    }
   </style>
 </head>
 
@@ -67,11 +76,19 @@
           <img src="media/veggie_bowl.png" class="img-fluid rounded-4" style="max-height: 300px; width: auto; object-fit: cover;" alt="Delicious Recipe">
       </div>
 
-      <!-- 3. THE BUTTON (Simplified: Removed the extra nested row) -->
+      <!-- 3. The Generate Recipes Button -->
       <div class="col-12 text-center">
-          <button class="btn btn-generate py-2 px-4" type="submit">
+          <!-- <button id="generateBtn" class="btn btn-generate py-2 px-4" type="button">
             <i class="bi bi-stars me-2"></i>Generate Recipes
+          </button> -->
+          <button id="generateBtn" class="btn btn-generate py-2 px-4" type="button">
+            <span id="btnText">
+              <i class="bi bi-stars me-2"></i>Generate Recipes
+            </span>
+
+            <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
           </button>
+          <div id="recipeResults" class="mt-5"></div>
       </div>
     </div>  
   </div>

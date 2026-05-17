@@ -2,6 +2,10 @@ console.log("Frontend script loaded");
 const input = document.getElementById("ingredientInput");
 const suggestionsBox = document.getElementById("suggestions");
 const tagsContainer = document.getElementById("tags");
+const generateBtn = document.getElementById("generateBtn");
+const recipeResults = document.getElementById("recipeResults");
+const btnText = document.getElementById("btnText");
+const btnSpinner = document.getElementById("btnSpinner");
 
 const ingredientsList = [
   "eggs",
@@ -58,7 +62,7 @@ function renderTags() {
 
   selectedIngredients.forEach(item => {
     const tag = document.createElement("span");
-    tag.className = "badge bg-primary p-2 d-flex align-items-center gap-2";
+    tag.className = "badge green-tag p-2 d-flex align-items-center gap-2";
     tag.style.cursor = "default";
 
     const text = document.createElement("span");
@@ -85,3 +89,61 @@ function renderTags() {
     tagsContainer.appendChild(tag);
   });
 }
+
+generateBtn.addEventListener("click", async () => {
+  btnText.textContent = "Generating...";
+  btnSpinner.classList.remove("d-none");
+  generateBtn.disabled = true;
+
+  try {
+    const response = await fetch("http://localhost:5001/recommend-recipes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        ingredients: selectedIngredients
+      })
+    });
+
+    const data = await response.json();
+
+    const recipes = data.recipes || [];
+
+    const filteredRecipes = recipes.filter(
+      recipe => recipe.matchScore > 0
+    );
+
+    recipeResults.innerHTML = "";
+
+    if (filteredRecipes.length === 0) {
+      recipeResults.innerHTML = `
+        <p class="text-center text-muted mt-3">
+          No strong matches found. Try adding more ingredients.
+        </p>
+      `;
+      return;
+    }
+
+    filteredRecipes.forEach(recipe => {
+      const card = document.createElement("div");
+      card.className = "card mt-3 p-3 shadow-sm";
+
+      card.innerHTML = `
+        <h5>${recipe.name}</h5>
+        <p>Match Score: ${recipe.matchScore}%</p>
+        <p>Missing: ${recipe.missingIngredients.join(", ")}</p>
+      `;
+
+      recipeResults.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    // RESET BUTTON STATE
+    btnText.innerHTML = `<i class="bi bi-stars me-2"></i>Generate Recipes`;
+    btnSpinner.classList.add("d-none");
+    generateBtn.disabled = false;
+  }
+});
