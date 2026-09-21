@@ -1,22 +1,86 @@
 [
   {
     "name": "Egg Fried Rice",
-    "ingredients": ["egg", "rice", "soy sauce", "onion"]
-  },
-  {
-    "name": "Veggie Omelette",
-    "ingredients": ["egg", "onion", "cheese", "capsicum"]
-  },
-  {
-    "name": "Tomato Pasta",
-    "ingredients": ["pasta", "tomato", "cheese", "garlic"]
+    "ingredients": ["eggs", "rice", "soy sauce", "onion"],
+    "instructions": [
+      "Heat oil in a pan over medium heat",
+      "Scramble the eggs lightly and remove from pan",
+      "Add onions and sauté until translucent",
+      "Add rice and soy sauce, stir well",
+      "Return eggs to pan and mix everything",
+      "Stir-fry for 3 minutes and serve hot"
+    ],
+    "image": "media/egg_fried_rice.png"
   },
   {
     "name": "Onion Rice Bowl",
-    "ingredients": ["rice", "onion", "garlic"]
+    "ingredients": ["rice", "onion", "garlic"],
+    "instructions": [
+      "Cook rice according to package instructions",
+      "Heat oil in a separate pan",
+      "Add sliced onions and minced garlic",
+      "Sauté until onions are golden brown",
+      "Mix the cooked rice with the onion mixture",
+      "Season with salt and pepper to taste"
+    ],
+    "image": "media/onion_rice_bowl.png"
+  },
+  {
+    "name": "Veggie Omelette",
+    "ingredients": ["eggs", "onion", "cheese", "capsicum"],
+    "instructions": [
+      "Beat eggs in a bowl with salt and pepper",
+      "Heat a non-stick pan with oil",
+      "Sauté onions and capsicum until soft",
+      "Pour eggs over the vegetables",
+      "Cook until edges are set",
+      "Sprinkle cheese on top",
+      "Fold the omelette and cook for 1 more minute"
+    ],
+    "image": "media/veggie_omelette.png"
   },
   {
     "name": "Cheesy Scramble",
-    "ingredients": ["egg", "cheese", "butter"]
+    "ingredients": ["eggs", "cheese", "butter"],
+    "instructions": [
+      "Whisk eggs in a bowl until well combined",
+      "Melt butter in a non-stick pan over low heat",
+      "Pour eggs into the pan",
+      "Stir continuously with a spatula",
+      "When eggs are almost set, add cheese",
+      "Continue stirring until cheese melts",
+      "Remove from heat while still creamy"
+    ],
+    "image": "media/cheesy_scramble.png"
+  },
+  {
+    "name": "Tomato Pasta",
+    "ingredients": ["pasta", "tomato", "cheese", "garlic"],
+    "instructions": [
+      "Boil pasta according to package instructions until al dente",
+      "In a separate pan, sauté minced garlic in olive oil",
+      "Add chopped tomatoes and cook until soft and saucy",
+      "Season with salt, pepper, and dried herbs",
+      "Add cooked pasta to the sauce and mix well",
+      "Sprinkle cheese on top and let it melt",
+      "Serve hot with extra cheese on top"
+    ],
+    "image": "media/tomato_pasta.png"
+  },
+  {
+    "name": "Paneer Curry",
+    "ingredients": ["paneer", "garlic", "ginger", "onion", "tomato", "chilli"],
+    "instructions": [
+      "Heat oil in a pan and add chopped onions",
+      "Sauté until golden brown, then add ginger and garlic",
+      "Add chopped tomatoes and green chillies, cook until soft",
+      "Blend the mixture into a smooth paste (optional)",
+      "Add turmeric, red chilli powder, and garam masala",
+      "Cook the masala until oil separates",
+      "Add water to make gravy and bring to a boil",
+      "Add paneer cubes and simmer for 5 minutes",
+      "Garnish with fresh coriander and serve with rice or bread"
+    ],
+    "image": "media/paneer_curry.png"
   }
 ]

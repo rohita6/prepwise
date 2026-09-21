@@ -22,13 +22,19 @@ for recipe in recipes:
     matched = user_ingredients.intersection(recipe_ingredients)
     missing = recipe_ingredients - user_ingredients
     score = int((len(matched) / len(recipe_ingredients)) * 100)
-
-    results.append({
-        "name": recipe["name"],
-        "matchScore": score,
-        "missingIngredients": list(missing)
-    })
+    
+    if score > 20:
+        results.append({
+            "name": recipe.get("name", "Untitled Recipe"),
+            "matchScore": score,
+            "missingIngredients": list(missing),
+            "image": recipe.get("image", ""),
+            "instructions": recipe.get("instructions", []),
+            "ingredients": recipe.get("ingredients", [])
+        })
 
 results.sort(key=lambda recipe: recipe["matchScore"], reverse=True)
 
-print(json.dumps(results, indent=2))
+top_results = results[:5]
+
+print(json.dumps(top_results, indent=2))
