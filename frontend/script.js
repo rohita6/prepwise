@@ -17,14 +17,17 @@ const ingredientsList = [
   "milk",
   "butter",
   "bread",
-  "chicken"
+  "chicken",
+  "paneer",
+  "ginger",
+  "chilli",
+  "soy sauce"
 ];
 
 let selectedIngredients = [];
 
 input.addEventListener("input", () => {
   const value = input.value.toLowerCase().trim();
-
   suggestionsBox.innerHTML = "";
 
   if (value === "") return;
@@ -48,15 +51,18 @@ input.addEventListener("input", () => {
     suggestionsBox.appendChild(li);
   });
 });
+
 function formatIngredient(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
+
 function addIngredient(ingredient) {
   if (selectedIngredients.includes(ingredient)) return;
-
   selectedIngredients.push(ingredient);
   renderTags();
 }
+
+// Fixed: Single instance of the event listener with cache-busting timestamp enabled
 function renderTags() {
   tagsContainer.innerHTML = "";
 
@@ -96,7 +102,8 @@ generateBtn.addEventListener("click", async () => {
   generateBtn.disabled = true;
 
   try {
-    const response = await fetch("http://localhost:5001/recommend-recipes", {
+    // Appended timestamp cache-buster directly to prevent local browser freeze cycles
+    const response = await fetch(`https://prepwise-backend-943b.onrender.com/recommend-recipes?t=${Date.now()}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -107,18 +114,16 @@ generateBtn.addEventListener("click", async () => {
     });
 
     const data = await response.json();
-
     const recipes = data.recipes || [];
-
-    const filteredRecipes = recipes.filter(
-      recipe => recipe.matchScore > 0
-    );
+    const filteredRecipes = recipes.filter(recipe => recipe.matchScore > 0);
 
     recipeResults.innerHTML = "";
+    recipeResults.className = "d-flex flex-row flex-nowrap overflow-x-auto gap-3 mt-5 pb-3 justify-content-start";
 
     if (filteredRecipes.length === 0) {
+      recipeResults.className = "mt-5 text-center";
       recipeResults.innerHTML = `
-        <p class="text-center text-muted mt-3">
+        <p class="text-muted">
           No strong matches found. Try adding more ingredients.
         </p>
       `;
@@ -126,22 +131,71 @@ generateBtn.addEventListener("click", async () => {
     }
 
     filteredRecipes.forEach(recipe => {
-      const card = document.createElement("div");
-      card.className = "card mt-3 p-3 shadow-sm";
+      const cardWrapper = document.createElement("div");
+      cardWrapper.className = "flex-shrink-0";
+      cardWrapper.style.width = "18rem";
 
-      card.innerHTML = `
-        <h5>${recipe.name}</h5>
-        <p>Match Score: ${recipe.matchScore}%</p>
-        <p>Missing: ${recipe.missingIngredients.join(", ")}</p>
+      cardWrapper.innerHTML = `
+        <div class="card h-100 p-3 shadow-sm text-start" style="cursor: pointer;">
+          <h5 class="card-title text-success fw-bold">${recipe.name}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Match Score: ${recipe.matchScore}%</h6>
+          <p class="card-text small">
+            <strong>Missing:</strong> ${recipe.missingIngredients.length > 0 ? recipe.missingIngredients.join(", ") : "None!"}
+          </p>
+        </div>
       `;
 
-      recipeResults.appendChild(card);
+      cardWrapper.addEventListener("click", () => {
+        document.getElementById("modalRecipeName").textContent = recipe.name;
+        
+        if (recipe.image && recipe.image.trim() !== "") {
+          document.getElementById("modalRecipeImg").src = recipe.image;
+        } else if (recipe.name === "Egg Fried Rice") {
+          document.getElementById("modalRecipeImg").src = "media/egg_fried_rice.png";
+        } else {
+          document.getElementById("modalRecipeImg").src = "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=800&auto=format&fit=crop";
+        }
+        
+        const ingredientsList = document.getElementById("modalRecipeIngredients");
+        const stepsList = document.getElementById("modalRecipeSteps");
+        
+        ingredientsList.innerHTML = "";
+        stepsList.innerHTML = "";
+
+        if (recipe.ingredients && recipe.ingredients.length > 0) {
+          recipe.ingredients.forEach(ing => {
+            const li = document.createElement("li");
+            li.className = "list-group-item border-0 px-0 py-1 text-muted small";
+            li.textContent = formatIngredient(ing);
+            ingredientsList.appendChild(li);
+          });
+        } else {
+          ingredientsList.innerHTML = `<li class="list-group-item border-0 px-0 py-1 text-muted small">Check cooking steps</li>`;
+        }
+
+        if (recipe.instructions && recipe.instructions.length > 0) {
+          recipe.instructions.forEach(step => {
+            const li = document.createElement("li");
+            li.className = "list-group-item border-0 px-0 py-2 text-muted small";
+            li.textContent = step;
+            stepsList.appendChild(li);
+          });
+        } else {
+          stepsList.innerHTML = `<li class="list-group-item border-0 px-0 py-1 text-muted small italic">No specific steps provided yet.</li>`;
+        }
+        
+        const myModal = new bootstrap.Modal(document.getElementById('recipeModal'));
+        myModal.show();
+      });
+
+      recipeResults.appendChild(cardWrapper);
     });
 
   } catch (err) {
     console.error(err);
+    recipeResults.className = "mt-5 text-center text-danger";
+    recipeResults.innerHTML = `<p>Error loading recipes. Please try again later.</p>`;
   } finally {
-    // RESET BUTTON STATE
     btnText.innerHTML = `<i class="bi bi-stars me-2"></i>Generate Recipes`;
     btnSpinner.classList.add("d-none");
     generateBtn.disabled = false;
